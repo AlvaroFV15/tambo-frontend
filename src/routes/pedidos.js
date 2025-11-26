@@ -230,5 +230,36 @@ router.put(
     });
   })
 );
+// GET - Obtener un pedido por ID (Para la pantalla de confirmación)
+router.get('/:id', generalLimiter, async (req, res) => {
+  try {
+    const { id } = req.params;
 
+    if (!id) return res.status(400).json({ error: 'ID requerido' });
+
+    // Obtenemos el pedido y sus detalles
+    const { data, error } = await supabase
+      .from('pedidos')
+      .select(`
+        *,
+        detalles_pedidos (
+          cantidad,
+          precio_unitario,
+          subtotal,
+          productos ( nombre, imagen_url )
+        )
+      `)
+      .eq('id', parseInt(id))
+      .single();
+
+    if (error) throw error;
+    if (!data) return res.status(404).json({ error: 'Pedido no encontrado' });
+
+    res.json(data);
+
+  } catch (error) {
+    console.error('Error obteniendo pedido:', error);
+    res.status(500).json({ error: 'Error interno' });
+  }
+});
 export default router;

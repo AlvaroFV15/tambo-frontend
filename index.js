@@ -14,8 +14,6 @@ import Pago from './pages/Pago';
 import Confirmacion from './pages/Confirmacion';
 import AdminLogin from './pages/AdminLogin';
 import AdminDashboard from './pages/AdminDashboard';
-import AdminMenu from './pages/AdminMenu'; // <--- 1. IMPORTAR ESTO
-import AdminStats from './pages/AdminStats';
 
 // Route protegida para admin
 function ProtectedAdminRoute({ children }) {
@@ -57,17 +55,9 @@ export default function App() {
                   </ProtectedAdminRoute>
                 }
               />
-              <Route
-                path="/admin/menu"
-                element={
-                  <ProtectedAdminRoute>
-                    <AdminMenu />
-                  </ProtectedAdminRoute>
-                }
-              />
-              <Route path="/admin/stats" element={<AdminStats />} />
+
               {/* Redirect */}
-              <Route path="/confirmacion" element={<Navigate to="confirmacion" />} />
+              <Route path="*" element={<Navigate to="/" />} />
             </Routes>
           </main>
           <Footer />

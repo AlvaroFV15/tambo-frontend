@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, Link } from 'react-router-dom';
 import { useApp } from '../context/AppContext';
 import { apiService } from '../services/api';
 import './Register.css';
@@ -11,6 +11,7 @@ export default function Register() {
     nombre: '',
     email: '',
     telefono: '',
+    password: '',
   });
   const [loading, setLoading] = useState(false);
 
@@ -35,13 +36,15 @@ export default function Register() {
       }
 
       // Pattern: Llamada al servicio API
+      // Enviar registro SIN password
       const response = await apiService.registroUsuario(
         formData.nombre,
         formData.email,
-        formData.telefono
+        formData.telefono,
+        formData.password
       );
 
-      if (response.success) {
+      if (response && response.success) {
         setUsuario(response.usuario);
         setNotification({ type: 'success', message: '¡Bienvenido! Registro completado' });
         navigate('/menu');
@@ -49,8 +52,11 @@ export default function Register() {
         setNotification({ type: 'error', message: response.message || 'Error al registrarse' });
       }
     } catch (error) {
+      // Más información útil para debugging
       console.error('[Register Error]', error);
-      setNotification({ type: 'error', message: 'Error de conexión. Intenta de nuevo.' });
+      const status = error?.status || error?.response?.status || null;
+      const msg = error?.message || error?.response?.data?.message || 'Error de conexión. Intenta de nuevo.';
+      setNotification({ type: 'error', message: status ? `Error ${status}: ${msg}` : msg });
     } finally {
       setLoading(false);
     }
@@ -103,6 +109,18 @@ export default function Register() {
               disabled={loading}
             />
           </div>
+          <div className="form-group">
+            <label>Contraseña</label>
+            <input
+              type="password"
+              name="password"
+              placeholder="Crea una contraseña segura"
+              value={formData.password}
+              onChange={handleChange}
+              required
+              minLength="6"
+              />
+            </div>
 
           <button 
             type="submit" 
@@ -114,7 +132,7 @@ export default function Register() {
         </form>
 
         <p className="already-registered">
-          ¿Ya estás registrado? <a href="#login">Inicia sesión aquí</a>
+          ¿Ya estás registrado? <Link to="/login">Inicia sesión aquí</Link>
         </p>
       </div>
     </div>

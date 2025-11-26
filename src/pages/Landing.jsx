@@ -20,7 +20,7 @@ export default function Landing() {
           </button>
         </div>
         <div className="hero-image">
-          <img src="/comida-criolla-peruana-elegante.jpg" alt="Comida Criolla" />
+          <img src="https://portal.andina.pe/EDPfotografia2/Thumbnail/2009/11/11/000110542W.jpg" alt="Comida Criolla" />
         </div>
       </section>
 

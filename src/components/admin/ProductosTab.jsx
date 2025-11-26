@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { useApp } from '../../context/AppContext';
 import { apiService } from '../../services/api';
 import './ProductosTab.css';
@@ -6,7 +6,8 @@ import './ProductosTab.css';
 // Patrón: Formulario dinámico para CRUD de productos
 export default function ProductosTab() {
   const { state, setProductos, setCategorias, setNotification } = useApp();
-  const { productos, categorias } = state;
+  // Asegurar que categorias sea siempre un array
+  const { productos, categorias = [] } = state;
   const [showForm, setShowForm] = useState(false);
   const [editingId, setEditingId] = useState(null);
   const [loading, setLoading] = useState(false);
@@ -19,30 +20,31 @@ export default function ProductosTab() {
     disponible: true,
   });
 
-  useEffect(() => {
-    if (categorias.length === 0) {
-      loadData();
-    }
-  }, []);
-
-  const loadData = async () => {
+  // Mover y memoizar loadData para poder incluirlo en las deps del useEffect
+  const loadData = useCallback(async () => {
     try {
       const [categoriasData, productosData] = await Promise.all([
         apiService.getCategorias(),
         apiService.getProductos(),
       ]);
 
-      if (categoriasData.success) {
+      if (categoriasData && categoriasData.success) {
         setCategorias(categoriasData.data);
       }
-      if (productosData.success) {
+      if (productosData && productosData.success) {
         setProductos(productosData.data);
       }
     } catch (error) {
       console.error('[Load Data Error]', error);
       setNotification({ type: 'error', message: 'Error al cargar datos' });
     }
-  };
+  }, [setCategorias, setProductos, setNotification]);
+
+  useEffect(() => {
+    if ((categorias?.length || 0) === 0) {
+      loadData();
+    }
+  }, [categorias.length, loadData]);
 
   const handleChange = (e) => {
     const { name, value, type, checked } = e.target;

@@ -1,93 +1,157 @@
+/* Header.css */
 .header {
-  background: linear-gradient(135deg, #8B4513 0%, #A0522D 100%);
-  color: #F5E6D3;
-  padding: 1.5rem 2rem;
-  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-  position: sticky;
+  background-color: #8B4513; /* Marrón Chocolate */
+  color: white;
+  position: sticky; /* Se queda pegado arriba */
   top: 0;
-  z-index: 100;
+  z-index: 1000;
+  box-shadow: 0 4px 10px rgba(0,0,0,0.2);
+  padding: 0 20px;
 }
 
 .header-container {
-  max-width: 1400px;
+  max-width: 1200px;
   margin: 0 auto;
+  height: 70px;
   display: flex;
   justify-content: space-between;
   align-items: center;
-  gap: 2rem;
 }
 
-.logo h1 {
-  font-size: 1.8rem;
-  font-weight: 700;
-  margin: 0;
-  letter-spacing: 0.5px;
+/* Logo */
+.logo {
+  font-size: 1.5rem;
+  font-weight: bold;
+  color: #D4AF37; /* Dorado */
+  text-decoration: none;
+  font-family: 'Playfair Display', serif;
+  transition: transform 0.2s;
 }
 
-.logo p {
-  font-size: 0.9rem;
-  margin: 0.25rem 0 0 0;
-  opacity: 0.9;
+.logo:hover {
+  transform: scale(1.05);
 }
 
-.nav {
+/* Navegación */
+.nav-links {
   display: flex;
   align-items: center;
-  gap: 1.5rem;
+  gap: 20px;
 }
 
-.user-greeting {
-  font-size: 0.95rem;
+.nav-links a {
+  text-decoration: none;
+  color: rgba(255,255,255,0.9);
   font-weight: 500;
+  transition: color 0.3s;
+  font-size: 0.95rem;
 }
 
-.cart-count {
-  background: #D4AF37;
-  color: #8B4513;
-  padding: 0.4rem 0.8rem;
+.nav-links a:hover, .nav-links a.active {
+  color: #D4AF37;
+}
+
+/* Botones Especiales */
+.btn-login {
+  border: 1px solid rgba(255,255,255,0.4);
+  padding: 8px 15px;
   border-radius: 20px;
-  font-weight: 600;
-  font-size: 0.85rem;
 }
 
-.admin-badge {
-  background: #DC143C;
+.btn-register {
+  background-color: #D4AF37;
+  color: #8B4513 !important;
+  padding: 8px 15px;
+  border-radius: 20px;
+  font-weight: bold !important;
+}
+
+.btn-logout {
+  background-color: #a52a2a; /* Rojo oscuro */
   color: white;
-  padding: 0.4rem 0.8rem;
-  border-radius: 6px;
-  font-weight: 600;
-  font-size: 0.85rem;
-}
-
-.logout-btn {
-  background: #D4AF37;
-  color: #8B4513;
   border: none;
-  padding: 0.6rem 1.2rem;
-  border-radius: 6px;
-  font-weight: 600;
+  padding: 8px 12px;
+  border-radius: 5px;
   cursor: pointer;
-  transition: all 0.3s ease;
+  font-size: 0.9rem;
 }
 
-.logout-btn:hover {
-  background: #F5E6D3;
-  transform: translateY(-2px);
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+.btn-logout:hover {
+  background-color: #c62828;
 }
 
+.link-admin {
+  font-size: 0.8rem !important;
+  opacity: 0.7;
+  border-left: 1px solid rgba(255,255,255,0.3);
+  padding-left: 15px;
+}
+
+/* Carrito Badge */
+.cart-badge-link {
+  position: relative;
+  margin-right: 10px;
+  font-size: 1.2rem !important;
+}
+
+.badge {
+  position: absolute;
+  top: -8px;
+  right: -10px;
+  background-color: #D4AF37;
+  color: #8B4513;
+  font-size: 0.75rem;
+  width: 18px;
+  height: 18px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: bold;
+}
+
+.user-info {
+  color: #ffe4b5;
+  font-size: 0.9rem;
+}
+
+/* Menú Hamburguesa (Oculto en PC) */
+.menu-toggle {
+  display: none;
+  background: none;
+  border: none;
+  color: white;
+  font-size: 1.8rem;
+  cursor: pointer;
+}
+
+/* RESPONSIVE (Celulares) */
 @media (max-width: 768px) {
-  .header-container {
-    flex-direction: column;
-    gap: 1rem;
+  .menu-toggle {
+    display: block;
   }
 
-  .logo h1 {
-    font-size: 1.4rem;
-  }
-
-  .nav {
+  .nav-links {
+    position: absolute;
+    top: 70px;
+    left: 0;
     width: 100%;
-    justify-content: center;
+    background-color: #6d360f; /* Marrón más oscuro */
+    flex-direction: column;
+    padding: 20px 0;
+    gap: 15px;
+    transform: translateY(-150%); /* Oculto arriba */
+    transition: transform 0.3s ease;
+    box-shadow: 0 5px 10px rgba(0,0,0,0.2);
+  }
+
+  .nav-links.open {
+    transform: translateY(0);
+  }
+
+  .link-admin {
+    border: none;
+    padding: 0;
+    margin-top: 10px;
   }
 }
