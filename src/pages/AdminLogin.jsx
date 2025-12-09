@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useApp } from '../context/AppContext';
 import apiService from '../services/api';
-import './Login.css'; 
+import './AdminLogin.css'; // <--- Asegúrate de usar el CSS nuevo
 
 export default function AdminLogin() {
   const navigate = useNavigate();
@@ -23,8 +23,7 @@ export default function AdminLogin() {
       
       console.log("🟢 Respuesta del servidor:", response);
 
-      // 1. Intentamos encontrar el token en varias ubicaciones posibles
-      // A veces viene directo en response.token, a veces en response.data.token
+      // 1. Lógica robusta para encontrar el token (Tu código original)
       const token = response.token || (response.data && response.data.token);
       const adminData = response.admin || (response.data && response.data.admin);
 
@@ -34,40 +33,46 @@ export default function AdminLogin() {
         // 2. Guardamos en el contexto global
         setAdmin(adminData, token);
         
-        // 3. Forzamos la redirección
+        // 3. Redirección segura
         navigate('/admin/dashboard', { replace: true });
       } else {
         console.warn("⚠️ No se encontró el token en la respuesta");
-        setError('Login correcto pero no se recibió el token.');
+        setError('Login correcto pero no se recibió el token de seguridad.');
       }
 
     } catch (err) {
       console.error("🔴 Error en login:", err);
-      setError('Credenciales incorrectas o error de servidor');
+      setError('Credenciales incorrectas o error de servidor.');
     } finally {
       setLoading(false);
     }
   };
 
   return (
-    <div className="login-container" style={{background: '#2c3e50'}}>
-      <div className="login-card">
-        <h2 style={{color: '#d4a373'}}>Acceso Administrativo</h2>
-        <p>Solo personal autorizado</p>
+    <div className="admin-login-container">
+      <div className="admin-login-card">
         
-        {error && <div className="error-message">{error}</div>}
+        {/* Ícono de Escudo */}
+        <div className="admin-icon">🛡️</div>
+
+        <h1>Acceso Administrativo</h1>
+        <p className="subtitle">Solo personal autorizado</p>
+        
+        {/* Mensaje de error estilizado */}
+        {error && <div className="error-msg">{error}</div>}
 
         <form onSubmit={handleSubmit}>
           <div className="form-group">
-            <label>Email Admin</label>
+            <label>Email Corporativo</label>
             <input 
               type="email" 
               value={formData.email}
               onChange={e => setFormData({...formData, email: e.target.value})}
               required 
-              placeholder="admin@ejemplo.com"
+              placeholder="admin@eltambo.com"
             />
           </div>
+
           <div className="form-group">
             <label>Contraseña</label>
             <input 
@@ -78,7 +83,9 @@ export default function AdminLogin() {
               placeholder="••••••"
             />
           </div>
-          <button type="submit" disabled={loading} style={{background: '#d4a373'}}>
+
+          {/* Botón con el nuevo estilo */}
+          <button type="submit" className="btn-admin" disabled={loading}>
             {loading ? 'Verificando...' : 'Entrar al Panel'}
           </button>
         </form>

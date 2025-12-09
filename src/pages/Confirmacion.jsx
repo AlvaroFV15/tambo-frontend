@@ -1,11 +1,11 @@
 import React, { useEffect, useState } from 'react';
-import { useLocation, Link } from 'react-router-dom';
+import { useLocation, Link, useNavigate } from 'react-router-dom';
 import apiService from '../services/api';
 import './Confirmacion.css';
 
-// Usamos export default para importar sin llaves {}
 export default function Confirmacion() {
   const location = useLocation();
+  const navigate = useNavigate(); // Agregado por si necesitas redireccionar
   const [pedido, setPedido] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
@@ -40,7 +40,8 @@ export default function Confirmacion() {
   if (loading) {
     return (
       <div className="confirmacion-container">
-        <h2>Cargando recibo...</h2>
+        <div className="spinner" style={{borderColor: '#d35400', borderTopColor:'transparent'}}></div>
+        <p style={{marginLeft:'10px', fontWeight:'bold', color:'#d35400'}}>Generando recibo...</p>
       </div>
     );
   }
@@ -49,44 +50,73 @@ export default function Confirmacion() {
   if (!pedidoId || error) {
     return (
       <div className="confirmacion-container">
-        <div className="confirmacion-card error">
-            <h2>⚠️ Ups...</h2>
-            <p>{error || "No encontramos el pedido. Posiblemente recargaste la página."}</p>
-            <Link to="/menu" className="btn-volver">Volver al Menú</Link>
+        <div className="confirmacion-card error" style={{padding: '40px'}}>
+            <div style={{fontSize:'3rem', marginBottom:'10px'}}>⚠️</div>
+            <h2>Ups, algo pasó</h2>
+            <p style={{color:'#666', marginBottom:'20px'}}>
+              {error || "No encontramos el pedido. Es posible que hayas recargado la página."}
+            </p>
+            <Link to="/menu" className="btn-volver" style={{width:'100%'}}>
+              Volver al Menú
+            </Link>
         </div>
       </div>
     );
   }
 
-  // 3. Si todo salió bien (Vista del Ticket)
+  // 3. Si todo salió bien (Vista del Ticket Moderno)
   return (
     <div className="confirmacion-container">
       <div className="confirmacion-card">
-        <div className="icon-check">✅</div>
-        <h1>¡Pedido Exitoso!</h1>
-        <p className="subtitulo">Tu orden #{pedido.numero_pedido} ha sido registrada.</p>
-
-        <div className="ticket-info">
-          <div className="ticket-row">
-            <span>Total Pagado:</span>
-            <span className="precio-final">S/ {pedido.total?.toFixed(2)}</span>
+        
+        {/* Cabecera Verde */}
+        <div className="card-header-success">
+          <div className="icon-circle">
+            <span>✓</span>
           </div>
-          <div className="ticket-row">
-            <span>Método:</span>
-            <span style={{textTransform:'capitalize'}}>{pedido.metodo_pago}</span>
-          </div>
-          
-          <hr />
-          
-          <div className="info-servicio">
-             <strong>Detalle:</strong>
-             <p>{pedido.observaciones}</p>
-          </div>
+          <h1>¡Pedido Recibido!</h1>
+          <p className="subtitulo">Orden #{pedido.numero_pedido}</p>
         </div>
 
-        <div className="acciones">
-          <button onClick={() => window.print()} className="btn-imprimir">🖨️ Imprimir</button>
-          <Link to="/menu" className="btn-volver">Pedir más</Link>
+        <div className="ticket-body">
+          
+          {/* Detalles estilo Recibo */}
+          <div className="ticket-details">
+            <div className="ticket-row">
+              <span>Fecha:</span>
+              <strong>{new Date(pedido.created_at).toLocaleDateString()}</strong>
+            </div>
+            <div className="ticket-row">
+              <span>Método de Pago:</span>
+              <strong style={{textTransform:'capitalize', color:'#2c3e50'}}>
+                {pedido.metodo_pago}
+              </strong>
+            </div>
+            
+            <div className="ticket-total">
+              <span>Total Pagado</span>
+              <span>S/ {parseFloat(pedido.total).toFixed(2)}</span>
+            </div>
+          </div>
+          
+          {/* Bloque de Notas / Delivery */}
+          {pedido.observaciones && (
+            <div className="info-servicio">
+               <strong>📝 Detalles del Servicio:</strong>
+               <p>{pedido.observaciones}</p>
+            </div>
+          )}
+
+          {/* Botones de Acción */}
+          <div className="acciones">
+            <button onClick={() => window.print()} className="btn-imprimir">
+              🖨️ Imprimir
+            </button>
+            <Link to="/menu" className="btn-volver">
+              🍽️ Pedir más
+            </Link>
+          </div>
+
         </div>
       </div>
     </div>

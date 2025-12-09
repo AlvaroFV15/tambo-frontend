@@ -10,21 +10,30 @@ export default function Pago() {
   const { carrito, usuario } = state;
   
   const [loading, setLoading] = useState(false);
+  
+  // 1. Estado del formulario (Agregamos codigoOperacion)
   const [formData, setFormData] = useState({
     tipoServicio: 'mesa',
     horaLlegada: '',
     comentarios: '',
-    metodoPago: 'efectivo' 
+    metodoPago: 'efectivo', 
+    codigoOperacion: '' // Nuevo campo para Yape Manual
   });
 
   const total = carrito.reduce((sum, item) => sum + (item.precio * item.cantidad), 0);
 
-  // --- LÓGICA DE PROCESAMIENTO (Memorizada) ---
+  // --- LÓGICA DE PROCESAMIENTO ---
   const procesarPedidoCompleto = useCallback(async (tokenCulqi = null, emailCliente = null) => {
     try {
       setLoading(true);
       
-      const infoAdmin = `SERVICIO: ${formData.tipoServicio} | HORA: ${formData.horaLlegada} | NOTAS: ${formData.comentarios}`;
+      // Construimos la nota para el admin
+      let infoAdmin = `SERVICIO: ${formData.tipoServicio} | HORA: ${formData.horaLlegada} | NOTAS: ${formData.comentarios}`;
+
+      // Si es Yape manual, agregamos el código a la nota
+      if (formData.metodoPago === 'yape' && formData.codigoOperacion) {
+          infoAdmin = `[YAPE REF: ${formData.codigoOperacion}] ` + infoAdmin;
+      }
 
       const pedidoData = {
         usuario_id: usuario.id,
@@ -36,13 +45,14 @@ export default function Pago() {
           cantidad: item.cantidad,
           precio_unitario: item.precio
         })),
-        email_cliente: emailCliente || usuario.email
+        email_cliente: emailCliente || usuario.email,
+        // Opcional: enviarlo también como campo separado si tu backend lo soporta
+        codigo_referencia: formData.codigoOperacion 
       };
 
       console.log("📝 Enviando pedido:", pedidoData);
 
       const resPedido = await apiService.crearPedido(pedidoData);
-      // Manejo robusto del ID
       const idPedido = resPedido.id || (resPedido.data && resPedido.data.id);
 
       if (!idPedido) throw new Error('No se recibió el ID del pedido');
@@ -59,15 +69,13 @@ export default function Pago() {
       alert('Error: ' + (error.message || 'Error desconocido'));
     } finally {
       setLoading(false);
-      // Cerrar Culqi si está abierto
       if (window.Culqi && window.Culqi.close) {
           window.Culqi.close();
       }
     }
   }, [usuario, total, formData, carrito, navigate, clearCart]);
 
-  // --- EFECTO PARA ASIGNAR LA FUNCIÓN CULQI AL WINDOW ---
-  // Esto solo define qué hacer cuando Culqi responda, NO abre la ventana todavía.
+  // --- EFECTO CULQI ---
   useEffect(() => {
     window.culqi = async function () {
       if (window.Culqi.token) {
@@ -81,7 +89,7 @@ export default function Pago() {
     };
   }, [procesarPedidoCompleto]);
 
-  // Redirecciones de seguridad
+  // Redirecciones
   useEffect(() => {
     if (!usuario) navigate('/login');
     if (carrito.length === 0) navigate('/menu');
@@ -91,27 +99,27 @@ export default function Pago() {
     setFormData(prev => ({ ...prev, [e.target.name]: e.target.value }));
   };
 
-  // --- MANEJO DEL BOTÓN PAGAR ---
+  // --- SUBMIT ---
   const handleSubmit = async (e) => {
     e.preventDefault();
     
     if (formData.metodoPago === 'tarjeta') {
-      // 1. Verificar si Culqi cargó
       if (typeof window.Culqi === 'undefined') {
-        alert('Error: La pasarela de pagos no cargó. Por favor recarga la página.');
+        alert('Error: La pasarela de pagos no cargó. Recarga la página.');
         return;
       }
 
       try {
-        // --- CAMBIO AQUÍ: LLAVE DIRECTA ---
-        window.Culqi.publicKey = 'pk_test_p9bbH9KTgrxQKHLH';
-        // ----------------------------------
+        // Tu llave pública
+        window.Culqi.publicKey = 'pk_test_p9bbH9KTgrxQKHLH'; 
 
+        // 2. CORRECCIÓN IMPORTANTE: Agregar email a settings
         window.Culqi.settings({
           title: 'El Tambo Cañetano',
           currency: 'PEN',
           description: 'Consumo Restaurante',
-          amount: Math.round(total * 100) 
+          amount: Math.round(total * 100),
+          email: usuario.email // <--- ESTO EVITA EL ERROR 400
         });
         
         window.Culqi.open();
@@ -122,7 +130,7 @@ export default function Pago() {
       }
       
     } else {
-      // Pago Efectivo / Yape
+      // Pago Efectivo o Yape Manual
       await procesarPedidoCompleto();
     }
   };
@@ -132,8 +140,10 @@ export default function Pago() {
   return (
     <div className="pago-container">
       <div className="pago-content">
+        
+        {/* --- COLUMNA IZQUIERDA: RESUMEN --- */}
         <div className="resumen-compra">
-          <h2>Resumen</h2>
+          <h2>📦 Resumen</h2>
           <div className="lista-items">
             {carrito.map(item => (
               <div key={item.id} className="item-resumen">
@@ -148,15 +158,16 @@ export default function Pago() {
           </div>
         </div>
 
+        {/* --- COLUMNA DERECHA: FORMULARIO --- */}
         <div className="formulario-envio">
-          <h2>Detalles del Servicio</h2>
+          <h2>📝 Detalles del Servicio</h2>
           <form onSubmit={handleSubmit}>
             
             <div className="form-group">
               <label>Opción de servicio</label>
               <select name="tipoServicio" value={formData.tipoServicio} onChange={handleChange}>
-                <option value="mesa">Para comer en el local</option>
-                <option value="llevar">Para llevar</option>
+                <option value="mesa">🍽️ Para comer en el local</option>
+                <option value="llevar">🥡 Para llevar</option>
               </select>
             </div>
 
@@ -167,20 +178,48 @@ export default function Pago() {
 
             <div className="form-group">
               <label>Notas (Opcional)</label>
-              <textarea name="comentarios" value={formData.comentarios} onChange={handleChange} rows="2" />
+              <textarea 
+                name="comentarios" 
+                value={formData.comentarios} 
+                onChange={handleChange} 
+                rows="2" 
+                placeholder="Ej: Sin cebolla, poca sal..." 
+              />
             </div>
 
             <div className="form-group">
               <label>Método de Pago</label>
               <select name="metodoPago" value={formData.metodoPago} onChange={handleChange}>
-                <option value="efectivo">Efectivo</option>
-                <option value="yape">Yape / Plin</option>
-                <option value="tarjeta">Tarjeta (Online)</option>
+                <option value="efectivo">💵 Efectivo (En local)</option>
+                <option value="yape">📱 Yape / Plin (Manual)</option>
+                <option value="tarjeta">💳 Tarjeta (Online)</option>
               </select>
             </div>
 
+            {/* --- BLOQUE DE YAPE MANUAL (Solo visible si selecciona Yape) --- */}
+            {formData.metodoPago === 'yape' && (
+              <div className="yape-manual-info">
+                <h4>📲 Escanea y Paga</h4>
+                <p>Yapea el monto exacto al: <strong>999 111 222</strong></p>
+                <p style={{fontSize:'0.8rem'}}>(Titular: El Tambo Cañetano)</p>
+                
+                <div className="form-group" style={{marginTop: '15px', textAlign:'left'}}>
+                  <label>Nº de Operación (Código):</label>
+                  <input 
+                    type="text" 
+                    name="codigoOperacion" 
+                    placeholder="Ej: 123456"
+                    value={formData.codigoOperacion}
+                    onChange={handleChange}
+                    required
+                    style={{borderColor: '#f57f17'}}
+                  />
+                </div>
+              </div>
+            )}
+
             <button type="submit" className="btn-confirmar" disabled={loading}>
-              {loading ? 'Procesando...' : (formData.metodoPago === 'tarjeta' ? 'Pagar con Tarjeta' : 'Confirmar Reserva')}
+              {loading ? 'Procesando...' : (formData.metodoPago === 'tarjeta' ? '💳 Pagar con Tarjeta' : '✅ Confirmar Pedido')}
             </button>
           </form>
         </div>

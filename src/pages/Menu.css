@@ -1,157 +1,119 @@
+/* src/pages/Menu.css */
 .menu-container {
-  max-width: 1400px;
+  max-width: 1200px;
   margin: 0 auto;
-  padding: 2rem;
-  background: linear-gradient(to bottom, #F5E6D3, #FFF8EF);
-  min-height: 100vh;
+  padding: 40px 20px;
+  padding-bottom: 100px; /* Espacio para botón flotante */
 }
 
 .menu-header {
   text-align: center;
-  margin-bottom: 3rem;
-  animation: fadeIn 0.6s ease-out;
+  margin-bottom: 40px;
 }
 
 .menu-header h1 {
   font-size: 2.5rem;
-  color: #8B4513;
-  margin: 0 0 0.5rem 0;
+  color: var(--primary);
   font-weight: 800;
+  margin-bottom: 10px;
 }
 
 .menu-header p {
+  color: var(--text-light);
   font-size: 1.1rem;
-  color: #A0522D;
-  margin: 0;
 }
 
+/* Filtros de Categorías */
 .categories-filter {
-  margin-bottom: 3rem;
-}
-
-.categories-filter h3 {
-  color: #8B4513;
-  margin: 0 0 1rem 0;
-  font-size: 1.2rem;
-  font-weight: 700;
+  margin-bottom: 40px;
+  overflow-x: auto; /* Scroll horizontal en móvil */
+  padding-bottom: 10px;
 }
 
 .categories-list {
   display: flex;
-  flex-wrap: wrap;
-  gap: 1rem;
-  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  min-width: max-content; /* Para que no se aplasten en móvil */
 }
 
 .category-btn {
-  padding: 0.7rem 1.5rem;
-  border: 2px solid #D4AF37;
-  background: white;
-  color: #8B4513;
-  border-radius: 20px;
+  background: var(--white);
+  border: 1px solid var(--border);
+  color: var(--text);
+  padding: 10px 24px;
+  border-radius: 50px;
   font-weight: 600;
-  cursor: pointer;
-  transition: all 0.3s ease;
   font-size: 0.95rem;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  box-shadow: var(--shadow);
 }
 
 .category-btn:hover {
-  background: #D4AF37;
-  color: white;
+  border-color: var(--primary);
+  color: var(--primary);
   transform: translateY(-2px);
 }
 
 .category-btn.active {
-  background: linear-gradient(135deg, #D4AF37 0%, #A0522D 100%);
-  color: white;
-  border-color: #8B4513;
+  background: var(--primary);
+  color: var(--white);
+  border-color: var(--primary);
+  box-shadow: 0 4px 12px rgba(211, 84, 0, 0.3);
 }
 
-.products-section {
-  margin-bottom: 3rem;
-}
-
+/* Rejilla de Productos */
 .products-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
-  gap: 2rem;
+  /* Mínimo 260px por tarjeta, máximo lo que quepa */
+  grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+  gap: 30px;
 }
 
 .loading {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  min-height: 400px;
-  color: #8B4513;
+  text-align: center;
+  padding: 50px;
+  color: var(--primary);
+  font-weight: bold;
 }
 
-.spinner {
-  width: 50px;
-  height: 50px;
-  border: 4px solid #D4AF37;
-  border-top: 4px solid #8B4513;
-  border-radius: 50%;
-  animation: spin 1s linear infinite;
-  margin-bottom: 1rem;
-}
-
-@keyframes spin {
-  0% { transform: rotate(0deg); }
-  100% { transform: rotate(360deg); }
-}
-
+/* Botón Flotante del Carrito */
 .floating-cart {
   position: fixed;
-  bottom: 2rem;
-  right: 2rem;
-  background: linear-gradient(135deg, #D4AF37 0%, #F5E6D3 100%);
-  color: #8B4513;
-  border: none;
-  padding: 1rem 1.5rem;
+  bottom: 30px;
+  right: 30px;
+  background: var(--primary);
+  color: white;
+  padding: 16px 28px;
   border-radius: 50px;
   font-weight: 700;
   font-size: 1rem;
-  cursor: pointer;
-  box-shadow: 0 4px 15px rgba(212, 175, 55, 0.4);
-  transition: all 0.3s ease;
-  z-index: 50;
+  border: none;
+  box-shadow: 0 10px 25px rgba(211, 84, 0, 0.4);
+  z-index: 90;
+  transition: transform 0.2s;
+  display: flex;
+  align-items: center;
+  gap: 10px;
 }
 
 .floating-cart:hover {
-  transform: translateY(-4px);
-  box-shadow: 0 8px 25px rgba(212, 175, 55, 0.5);
+  transform: scale(1.05) translateY(-5px);
+  background: var(--primary-dark);
 }
 
-@keyframes fadeIn {
-  from {
-    opacity: 0;
-    transform: translateY(20px);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
-}
-
+/* Responsive */
 @media (max-width: 768px) {
+  .categories-list {
+    justify-content: flex-start; /* Alinear a la izquierda en móvil */
+    padding-left: 5px;
+  }
   .menu-header h1 {
     font-size: 2rem;
   }
-
-  .products-grid {
-    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
-    gap: 1rem;
-  }
-
-  .categories-list {
-    overflow-x: auto;
-    padding-bottom: 0.5rem;
-  }
-
   .floating-cart {
-    bottom: 1rem;
-    right: 1rem;
-    padding: 0.8rem 1rem;
+    bottom: 20px;
+    right: 20px;
+    padding: 14px 20px;
   }
 }

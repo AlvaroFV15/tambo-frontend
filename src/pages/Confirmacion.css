@@ -1,204 +1,196 @@
+/* src/pages/Confirmacion.css */
+
 .confirmacion-container {
+  min-height: 100vh;
+  background-color: var(--bg-light); /* Crema suave */
   display: flex;
   align-items: center;
   justify-content: center;
-  min-height: 100vh;
-  background: linear-gradient(135deg, #4CAF50 0%, #45a049 100%);
-  padding: 2rem;
+  padding: 20px;
+  font-family: 'Poppins', sans-serif;
 }
 
+/* Tarjeta Principal */
 .confirmacion-card {
-  background: white;
-  padding: 3rem;
-  border-radius: 12px;
-  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.2);
-  max-width: 600px;
+  background: var(--white);
   width: 100%;
-  animation: slideUp 0.6s ease-out;
+  max-width: 480px;
+  border-radius: 20px;
+  box-shadow: var(--shadow-lg);
+  overflow: hidden;
   text-align: center;
+  position: relative;
+  animation: slideUp 0.6s ease-out;
 }
 
-.success-icon {
-  width: 80px;
-  height: 80px;
-  background: linear-gradient(135deg, #4CAF50 0%, #45a049 100%);
+/* --- CABECERA (Verde Éxito) --- */
+.card-header-success {
+  background: #27ae60; /* Verde éxito */
+  padding: 40px 20px 30px;
   color: white;
+  position: relative;
+  clip-path: ellipse(150% 100% at 50% 0%); /* Curva suave abajo */
+}
+
+.icon-circle {
+  width: 70px;
+  height: 70px;
+  background: white;
+  color: #27ae60;
   border-radius: 50%;
   display: flex;
   align-items: center;
   justify-content: center;
-  font-size: 3rem;
-  margin: 0 auto 1.5rem;
-  animation: scaleIn 0.4s ease-out;
+  font-size: 2.5rem;
+  margin: 0 auto 15px;
+  box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+  animation: popIn 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275) 0.3s backwards;
 }
 
 .confirmacion-card h1 {
-  color: #8B4513;
-  font-size: 2rem;
-  margin: 0 0 0.5rem 0;
+  font-size: 1.8rem;
+  margin: 0;
   font-weight: 800;
+  letter-spacing: -0.5px;
 }
 
-.confirmation-message {
-  color: #666;
-  font-size: 1.05rem;
-  margin: 0 0 2rem 0;
+.subtitulo {
+  margin: 5px 0 0;
+  font-size: 0.95rem;
+  opacity: 0.9;
+  font-weight: 500;
 }
 
-.pedido-info {
-  background: #f9f9f9;
-  padding: 2rem;
-  border-radius: 8px;
-  margin-bottom: 2rem;
-  border-left: 4px solid #D4AF37;
+/* --- CUERPO DEL TICKET --- */
+.ticket-body {
+  padding: 30px;
 }
 
-.info-row {
+.ticket-details {
+  background-color: #fafafa;
+  border: 2px dashed #e0e0e0; /* Efecto borde cortado */
+  border-radius: 12px;
+  padding: 20px;
+  margin-bottom: 25px;
+}
+
+.ticket-row {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 12px;
+  font-size: 0.95rem;
+  color: var(--text-light);
+}
+
+.ticket-row strong {
+  color: var(--text);
+  font-weight: 600;
+}
+
+.ticket-total {
+  border-top: 1px solid #ddd;
+  padding-top: 12px;
+  margin-top: 12px;
   display: flex;
   justify-content: space-between;
   align-items: center;
-  margin-bottom: 1rem;
-  font-size: 0.95rem;
+  color: var(--primary); /* Naranja marca */
+  font-weight: 800;
+  font-size: 1.2rem;
 }
 
-.info-row:last-child {
-  margin-bottom: 0;
-}
-
-.info-row span {
-  color: #999;
-}
-
-.info-row strong {
-  color: #8B4513;
-  font-weight: 700;
-}
-
-.badge-pending {
-  display: inline-block;
-  background: #FFC107;
-  color: #333;
-  padding: 0.4rem 0.8rem;
-  border-radius: 20px;
-  font-size: 0.85rem;
-  font-weight: 600;
-}
-
-.next-steps {
+/* Bloque de notas/observaciones */
+.info-servicio {
+  background-color: #fff8e1; /* Amarillo nota */
+  color: #f57f17;
+  padding: 15px;
+  border-radius: 8px;
   text-align: left;
-  background: #e8f5e9;
-  padding: 1.5rem;
-  border-radius: 8px;
-  margin-bottom: 1.5rem;
+  font-size: 0.9rem;
+  line-height: 1.5;
+  margin-bottom: 25px;
+  border-left: 4px solid #f57f17;
 }
 
-.next-steps h3 {
-  color: #8B4513;
-  margin: 0 0 1rem 0;
-  font-size: 1.1rem;
+.info-servicio strong {
+  display: block;
+  margin-bottom: 5px;
+  text-transform: uppercase;
+  font-size: 0.8rem;
+  letter-spacing: 1px;
 }
 
-.next-steps ol {
+.info-servicio p {
   margin: 0;
-  padding-left: 1.5rem;
-  color: #666;
+  color: #555;
 }
 
-.next-steps li {
-  margin-bottom: 0.5rem;
-  line-height: 1.6;
+/* --- BOTONES --- */
+.acciones {
+  display: flex;
+  gap: 15px;
 }
 
-.contact-info {
-  background: #f0f8ff;
-  padding: 1rem;
-  border-radius: 8px;
-  margin-bottom: 2rem;
-  color: #333;
+.btn-imprimir, .btn-volver {
+  flex: 1;
+  padding: 12px;
+  border-radius: 50px;
+  font-weight: 700;
   font-size: 0.95rem;
-}
-
-.contact-info strong {
-  color: #D4AF37;
-  font-weight: 700;
-}
-
-.continue-btn {
-  width: 100%;
-  padding: 1rem;
-  background: linear-gradient(135deg, #D4AF37 0%, #F5E6D3 100%);
-  color: #8B4513;
-  border: none;
-  border-radius: 6px;
-  font-weight: 700;
-  font-size: 1rem;
   cursor: pointer;
-  transition: all 0.3s ease;
+  text-decoration: none;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: transform 0.2s, box-shadow 0.2s;
+  border: none;
 }
 
-.continue-btn:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 6px 20px rgba(212, 175, 55, 0.3);
-}
-
-.error-message {
+.btn-imprimir {
   background: white;
-  padding: 2rem;
-  border-radius: 12px;
-  text-align: center;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  color: var(--text);
+  border: 1px solid #ddd;
 }
 
-.error-message p {
-  color: #666;
-  margin-bottom: 1.5rem;
+.btn-imprimir:hover {
+  background: #f5f5f5;
 }
 
-.error-message button {
-  background: linear-gradient(135deg, #D4AF37 0%, #F5E6D3 100%);
-  color: #8B4513;
-  border: none;
-  padding: 0.8rem 1.5rem;
-  border-radius: 6px;
-  font-weight: 600;
-  cursor: pointer;
-  transition: all 0.3s ease;
+.btn-volver {
+  background: var(--primary);
+  color: white;
+  box-shadow: 0 4px 10px rgba(211, 84, 0, 0.3);
 }
 
+.btn-volver:hover {
+  background: var(--primary-dark);
+  transform: translateY(-2px);
+}
+
+/* Estado de Error */
+.confirmacion-card.error {
+  border-top: 5px solid var(--danger);
+}
+
+.confirmacion-card.error h2 {
+  color: var(--danger);
+  margin-bottom: 10px;
+}
+
+/* Animaciones */
 @keyframes slideUp {
-  from {
-    opacity: 0;
-    transform: translateY(30px);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
+  from { opacity: 0; transform: translateY(30px); }
+  to { opacity: 1; transform: translateY(0); }
 }
 
-@keyframes scaleIn {
-  from {
-    opacity: 0;
-    transform: scale(0.5);
-  }
-  to {
-    opacity: 1;
-    transform: scale(1);
-  }
+@keyframes popIn {
+  from { transform: scale(0); }
+  to { transform: scale(1); }
 }
 
-@media (max-width: 640px) {
-  .confirmacion-card {
-    padding: 1.5rem;
-  }
-
-  .confirmacion-card h1 {
-    font-size: 1.5rem;
-  }
-
-  .info-row {
+/* Responsive */
+@media (max-width: 480px) {
+  .acciones {
     flex-direction: column;
-    align-items: flex-start;
-    gap: 0.5rem;
   }
 }
